@@ -1,7 +1,12 @@
+# In the spirit of our interview, I looked at some past player data. I thought this would be a good opportunity to show that 
+# I know my way around R while providing some insights on players that we watch every year. I used a dataset I found from Kaggle and
+# checked that it was clean before moving forward.
+
 install.packages('tidyverse')
+install.packages('ggplot2'
 
 library(tidyverse)
-
+library(ggplot2)
 
 #Most Impactful Offensive Players
 
@@ -21,6 +26,8 @@ ggplot(data = player_by_year, mapping = aes(x = points_total, y = assists_total,
        y = "Assists",
        x = "Points"
          )
+
+
 
 #Observing the most effecient High Volume Scorers
 
@@ -42,6 +49,8 @@ ggplot(data = player_avg2, mapping = aes(x = avg_ts, y = avg_pts, label= player_
        y = "Average PPG",
        x = "Average TS%"
   )
+
+
 
 #observing the teams with the most first round picks
 
