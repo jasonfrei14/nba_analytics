@@ -1,9 +1,7 @@
-install.packages("ggrepel")
 install.packages('tidyverse')
 
 library(tidyverse)
-library(ggrepel)
-library(reshape2)
+
 
 #Most Impactful Offensive Players
 
