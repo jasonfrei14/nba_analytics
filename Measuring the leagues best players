@@ -1,0 +1,62 @@
+install.packages("ggrepel")
+install.packages('tidyverse')
+
+library(tidyverse)
+library(ggrepel)
+library(reshape2)
+
+#Most Impactful Offensive Players
+
+player_by_year <- all_seasons %>% group_by(player_name) %>% summarize(
+  points_total = sum(pts * gp),
+  assists_total = sum(ast * gp),
+  reb_total = sum(reb * gp),
+  games_total = sum(gp)
+)
+
+ggplot(data = player_by_year, mapping = aes(x = points_total, y = assists_total, color = games_total , label= player_name )) + 
+  geom_point() +
+  geom_jitter(width = 1, size = 1) +
+  geom_text_repel(aes(label = ifelse(points_total >= 25000 | assists_total >= 6000,as.character(player_name),'')),hjust=0,vjust=.5) +
+  labs(title = "Most Impactful Offensive Players",
+       subtitle = "Player totals since 1996",
+       y = "Assists",
+       x = "Points"
+         )
+
+#Observing the most effecient High Volume Scorers
+
+filter(all_seasons, usg_pct > .25 & gp > 50 & ts_pct <.5 & pts>20)
+
+player_avg <- all_seasons %>% group_by(player_name) %>% summarize(
+  avg_ts = mean(ts_pct, trim = 0,na.rm = TRUE),
+  avg_pts = mean(pts, trim = 0,na.rm = TRUE),
+  total_games = sum(gp)
+)
+
+player_avg2 = filter(player_avg,total_games >= 100)
+
+ggplot(data = player_avg2, mapping = aes(x = avg_ts, y = avg_pts, label= player_name,color = total_games )) + 
+  geom_point() +
+  geom_text_repel(aes(label = ifelse(avg_pts >= 22 & avg_ts > .56,as.character(player_name),'')),hjust=0,vjust=.5) +
+  labs(title = "Most Efficient High Volume Players",
+       subtitle = "Since 1996 (Minimum of 100 games played)",
+       y = "Average PPG",
+       x = "Average TS%"
+  )
+
+#observing the teams with the most first round picks
+
+drafted_stats <- all_seasons %>% group_by(college) %>% 
+  count(college, draft_round, sort= TRUE) 
+
+drafted_stats_fltr <- filter(drafted_stats ,college != "None" & draft_round == "1" & n >= 105)
+
+drafted_stats_fltr <- arrange(drafted_stats_fltr, desc(n))
+
+ggplot(data = drafted_stats_fltr, mapping = aes(x = reorder(college, n), y = n)) +
+  geom_bar(stat= "identity", color = "blue", fill = "white") +
+  labs(title = "First Round Draft Picks",
+       subtitle = "Top 10 teams with first round picks Since 1996",
+       x = "College",
+       y = "First Round Picks"
